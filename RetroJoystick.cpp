@@ -828,6 +828,7 @@ void JoyClassic::loop() {
     delay(50);
 }
 
+
 static uint8_t enter_config[]={0x01,0x43,0x00,0x01,0x00};
 static uint8_t set_mode[]={0x01,0x44,0x00,0x01,0x03,0x00,0x00,0x00,0x00};
 static uint8_t set_bytes_large[]={0x01,0x4F,0x00,0xFF,0xFF,0x03,0x00,0x00,0x00};
@@ -1262,6 +1263,18 @@ JoySegaMastersystem::JoySegaMastersystem(uint8_t up, uint8_t down,
 }
 
 
+JoySegaMastersystem::loop(){
+	!digitalRead(CONTROL_PAD_UP) ? Joystick.pressButton(0) : Joystick.releaseButton(0);
+	!digitalRead(CONTROL_PAD_DOWN) ? Joystick.pressButton(1) : Joystick.releaseButton(1);
+	!digitalRead(CONTROL_PAD_LEFT) ? Joystick.pressButton(2) : Joystick.releaseButton(2);
+	!digitalRead(CONTROL_PAD_RIGHT) ? Joystick.pressButton(3) : Joystick.releaseButton(3);
+	!digitalRead(CONTROL_PAD_B1) ? Joystick.pressButton(4) : Joystick.releaseButton(4);
+	!digitalRead(CONTROL_PAD_B2) ? Joystick.pressButton(5) : Joystick.releaseButton(5);
+	sendState();
+	delay(25);
+}
+
+
 JoySNES::JoySNES(uint8_t clock, uint8_t latch, uint8_t data):
 		_clock(clock), _latch(latch), _data(data) {
     pinMode(clock, OUTPUT);
@@ -1278,7 +1291,6 @@ void JoySNES::loop(){
     delayMicroseconds(12); // 12us latch
     digitalWrite(_latch, LOW);
     delayMicroseconds(6);
-    // Retrieve 4021s sixteen bits of data
     for(int i = 0; i < 16; i++){
         digitalWrite(_clock, LOW);
         delayMicroseconds(6);

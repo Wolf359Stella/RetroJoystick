@@ -22,8 +22,9 @@ This project currently includes support for:
 ## This is a fork!
 
 The original authors of this project are:
-* John Milner / jfrmilner (Classic, )
-* 
+* [John Milner](https://github.com/jfrmilner) (Classic, SNES, Sega Mega Drive, Sega Master System)
+* Jon Thysell <thysell@gmail.co> (Sega Mega Drive)
+* [Bill Porter](https://github.com/madsci1016) (PS2)
 
 ## Material
 John designed a circuit board and selector system so multiple controllers could all be connected and used on one system. Check it out by clicking the below image.. 

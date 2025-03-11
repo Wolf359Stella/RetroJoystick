@@ -351,6 +351,20 @@ class JoyClassic: public Joystick_ {
 };
 
 
+class JoyNESClone: public Joystick_ {
+    private:
+        uint8_t _clock;
+        uint8_t _latch;
+        uint8_t _data;
+    public:
+        JoySNES(uint8_t clock, uint8_t latch, uint8_t data);
+        /**
+        * Main loop for the joystick.
+        */
+        void loop();
+};
+
+
 #define CTRL_CLK        4
 #define CTRL_BYTE_DELAY 3
 #define CHK(x,y) (x & (1<<y))
@@ -471,8 +485,8 @@ class JoySegaMastersystem: public Joystick_ {
         * Main loop for the joystick.
         */
         void loop();
-            
 };
+
 
 
 #define SNES_B       1      //000000000001
