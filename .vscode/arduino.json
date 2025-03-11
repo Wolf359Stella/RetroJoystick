@@ -1,5 +1,0 @@
-{
-    "board": "arduino:avr:leonardo",
-    "sketch": "gp_snes/gp_snes.ino",
-    "port": "/dev/ttyACM0"
-}
