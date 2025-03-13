@@ -1,6 +1,6 @@
 # Classic Joystick
 
-This example can used to connec the following controllers:
+This example can used to connect the following controllers:
 
 <table border="5" align="center" style="width:100%">
     <tr>

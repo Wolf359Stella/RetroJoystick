@@ -23,7 +23,7 @@ This project currently includes support for:
 
 The original authors of this project are:
 * [John Milner](https://github.com/jfrmilner) (Classic, SNES, Sega Mega Drive, Sega Master System)
-* Jon Thysell <thysell@gmail.co> (Sega Mega Drive)
+* Jon Thysell <thysell@gmail.com> (Sega Mega Drive)
 * [Bill Porter](https://github.com/madsci1016) (PS2)
 
 ## Material

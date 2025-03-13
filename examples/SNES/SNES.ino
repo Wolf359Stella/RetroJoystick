@@ -1,4 +1,4 @@
-#include <retro_joystick.h>
+#include <RetroJoystick.h>
 
 #define CLOCK 6
 #define LATCH 7
