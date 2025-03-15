@@ -13,12 +13,12 @@ JoyClassic::JoyClassic(uint8_t up, uint8_t down, uint8_t left, uint8_t right,
 
 void JoyClassic::loop() {
     !digitalRead(button) ? pressButton(0) : releaseButton(0);
-    setXAxis(0);
-    setYAxis(0);
-    if (!digitalRead(up)) setYAxis(-127);
-    if (!digitalRead(down)) setYAxis(127);
-    if (!digitalRead(left)) setXAxis(-127);
-    if (!digitalRead(button)) setXAxis(127);
+    _xAxis.val = 0;
+    _yAxis.val = 0;
+    if (!digitalRead(up)) _yAxis.val = -127;
+    if (!digitalRead(down)) _yAxis.val = 127;
+    if (!digitalRead(left)) _xAxis.val = -127;
+    if (!digitalRead(button)) _xAxis.val = 127;
     sendState();
     delay(50);
 }

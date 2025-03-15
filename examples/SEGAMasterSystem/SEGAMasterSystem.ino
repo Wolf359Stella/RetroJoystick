@@ -9,9 +9,7 @@
 JoySegaMastersystem joystick(UP, DOWN, LEFT, RIGHT, B1, B2);
 
 
-void setup() {
-    joystick.begin(false);
-}
+void setup() {}
 
 
 void loop() {

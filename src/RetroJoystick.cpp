@@ -43,7 +43,6 @@
 	#define USB_Send USBD_Send
 #endif
 
-#define JOYSTICK_REPORT_ID_INDEX 7
 #define JOYSTICK_AXIS_MINIMUM 0
 #define JOYSTICK_AXIS_MAXIMUM 65535
 #define JOYSTICK_SIMULATOR_MINIMUM 0
@@ -194,336 +193,298 @@ Joystick_::Joystick_( uint8_t hidReportId, uint8_t joystickType,
 					  + _include.RxAxis + _include.RyAxis + _include.RzAxis;
 	uint8_t simulationCount = _include.Rudder + _include.Throttle + _include.Brake
 							+ _include.Accelerator + _include.Steering; 
-    uint8_t tempHidReportDescriptor[150];
-    int hidReportDescriptorSize = 0;
+    uint8_t HidDescriptor[150];
+    int hidDescriptorSize = 0;
 
     // USAGE_PAGE (Generic Desktop)
-    tempHidReportDescriptor[hidReportDescriptorSize++] = 0x05;
-    tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
+    HidDescriptor[hidDescriptorSize++] = 0x05;
+    HidDescriptor[hidDescriptorSize++] = 0x01;
 
     // USAGE (Joystick - 0x04; Gamepad - 0x05; Multi-axis Controller - 0x08)
-    tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-    tempHidReportDescriptor[hidReportDescriptorSize++] = joystickType;
+    HidDescriptor[hidDescriptorSize++] = 0x09;
+    HidDescriptor[hidDescriptorSize++] = joystickType;
 
     // COLLECTION (Application)
-    tempHidReportDescriptor[hidReportDescriptorSize++] = 0xa1;
-    tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
+    HidDescriptor[hidDescriptorSize++] = 0xa1;
+    HidDescriptor[hidDescriptorSize++] = 0x01;
 
     // REPORT_ID (Default: 3)
-    tempHidReportDescriptor[hidReportDescriptorSize++] = 0x85;
-    tempHidReportDescriptor[hidReportDescriptorSize++] = _hidReportId;
+    HidDescriptor[hidDescriptorSize++] = 0x85;
+    HidDescriptor[hidDescriptorSize++] = _hidReportId;
 	
 	if (_buttonCount > 0) {
 
 		// USAGE_PAGE (Button)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x05;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
+		HidDescriptor[hidDescriptorSize++] = 0x05;
+		HidDescriptor[hidDescriptorSize++] = 0x09;
 
 		// USAGE_MINIMUM (Button 1)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x19;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
+		HidDescriptor[hidDescriptorSize++] = 0x19;
+		HidDescriptor[hidDescriptorSize++] = 0x01;
 
 		// USAGE_MAXIMUM (Button 32)            
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x29;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = _buttonCount;
+		HidDescriptor[hidDescriptorSize++] = 0x29;
+		HidDescriptor[hidDescriptorSize++] = _buttonCount;
 
 		// LOGICAL_MINIMUM (0)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x15;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
+		HidDescriptor[hidDescriptorSize++] = 0x15;
+		HidDescriptor[hidDescriptorSize++] = 0x00;
 
 		// LOGICAL_MAXIMUM (1)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x25;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
+		HidDescriptor[hidDescriptorSize++] = 0x25;
+		HidDescriptor[hidDescriptorSize++] = 0x01;
 
 		// REPORT_SIZE (1)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x75;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
+		HidDescriptor[hidDescriptorSize++] = 0x75;
+		HidDescriptor[hidDescriptorSize++] = 0x01;
 
 		// REPORT_COUNT (# of buttons)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x95;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = _buttonCount;
+		HidDescriptor[hidDescriptorSize++] = 0x95;
+		HidDescriptor[hidDescriptorSize++] = _buttonCount;
 
 		// UNIT_EXPONENT (0)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x55;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
+		HidDescriptor[hidDescriptorSize++] = 0x55;
+		HidDescriptor[hidDescriptorSize++] = 0x00;
 
 		// UNIT (None)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x65;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
+		HidDescriptor[hidDescriptorSize++] = 0x65;
+		HidDescriptor[hidDescriptorSize++] = 0x00;
 
 		// INPUT (Data,Var,Abs)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x81;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x02;
+		HidDescriptor[hidDescriptorSize++] = 0x81;
+		HidDescriptor[hidDescriptorSize++] = 0x02;
 
-		if (buttonPaddingBits > 0) {
-			
-			// REPORT_SIZE (1)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x75;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
+		if (buttonPaddingBits > 0) {			
+			HidDescriptor[hidDescriptorSize++] = 0x75; // REPORT_SIZE (1)
+			HidDescriptor[hidDescriptorSize++] = 0x01;
 
 			// REPORT_COUNT (# of padding bits)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x95;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = buttonPaddingBits;
+			HidDescriptor[hidDescriptorSize++] = 0x95;
+			HidDescriptor[hidDescriptorSize++] = buttonPaddingBits;
 					
 			// INPUT (Const,Var,Abs)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x81;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x03;
-			
-		} // Padding Bits Needed
-
-	} // Buttons
-
-	if ((axisCount > 0) || (_hatSwitchCount > 0)) { // USAGE_PAGE (Generic Desktop)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x05;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
+			HidDescriptor[hidDescriptorSize++] = 0x81;
+			HidDescriptor[hidDescriptorSize++] = 0x03;	
+		}
 	}
-
+	if ((axisCount > 0) || (_hatSwitchCount > 0)) { // USAGE_PAGE (Generic Desktop)
+		HidDescriptor[hidDescriptorSize++] = 0x05;
+		HidDescriptor[hidDescriptorSize++] = 0x01;
+	}
 	if (_hatSwitchCount > 0) {
 
 		// USAGE (Hat Switch)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x39;
+		HidDescriptor[hidDescriptorSize++] = 0x09;
+		HidDescriptor[hidDescriptorSize++] = 0x39;
 
 		// LOGICAL_MINIMUM (0)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x15;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
+		HidDescriptor[hidDescriptorSize++] = 0x15;
+		HidDescriptor[hidDescriptorSize++] = 0x00;
 
 		// LOGICAL_MAXIMUM (7)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x25;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x07;
+		HidDescriptor[hidDescriptorSize++] = 0x25;
+		HidDescriptor[hidDescriptorSize++] = 0x07;
 
 		// PHYSICAL_MINIMUM (0)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x35;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
+		HidDescriptor[hidDescriptorSize++] = 0x35;
+		HidDescriptor[hidDescriptorSize++] = 0x00;
 
 		// PHYSICAL_MAXIMUM (315)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x46;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x3B;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
+		HidDescriptor[hidDescriptorSize++] = 0x46;
+		HidDescriptor[hidDescriptorSize++] = 0x3B;
+		HidDescriptor[hidDescriptorSize++] = 0x01;
 
 		// UNIT (Eng Rot:Angular Pos)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x65;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x14;
+		HidDescriptor[hidDescriptorSize++] = 0x65;
+		HidDescriptor[hidDescriptorSize++] = 0x14;
 
 		// REPORT_SIZE (4)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x75;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x04;
+		HidDescriptor[hidDescriptorSize++] = 0x75;
+		HidDescriptor[hidDescriptorSize++] = 0x04;
 
 		// REPORT_COUNT (1)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x95;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
+		HidDescriptor[hidDescriptorSize++] = 0x95;
+		HidDescriptor[hidDescriptorSize++] = 0x01;
 						
 		// INPUT (Data,Var,Abs)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x81;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x02;
+		HidDescriptor[hidDescriptorSize++] = 0x81;
+		HidDescriptor[hidDescriptorSize++] = 0x02;
 		
 		if (_hatSwitchCount > 1) {
 			
 			// USAGE (Hat Switch)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x39;
+			HidDescriptor[hidDescriptorSize++] = 0x09;
+			HidDescriptor[hidDescriptorSize++] = 0x39;
 
 			// LOGICAL_MINIMUM (0)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x15;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
+			HidDescriptor[hidDescriptorSize++] = 0x15;
+			HidDescriptor[hidDescriptorSize++] = 0x00;
 
 			// LOGICAL_MAXIMUM (7)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x25;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x07;
+			HidDescriptor[hidDescriptorSize++] = 0x25;
+			HidDescriptor[hidDescriptorSize++] = 0x07;
 
 			// PHYSICAL_MINIMUM (0)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x35;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
+			HidDescriptor[hidDescriptorSize++] = 0x35;
+			HidDescriptor[hidDescriptorSize++] = 0x00;
 
 			// PHYSICAL_MAXIMUM (315)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x46;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x3B;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
+			HidDescriptor[hidDescriptorSize++] = 0x46;
+			HidDescriptor[hidDescriptorSize++] = 0x3B;
+			HidDescriptor[hidDescriptorSize++] = 0x01;
 
 			// UNIT (Eng Rot:Angular Pos)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x65;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x14;
+			HidDescriptor[hidDescriptorSize++] = 0x65;
+			HidDescriptor[hidDescriptorSize++] = 0x14;
 
 			// REPORT_SIZE (4)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x75;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x04;
+			HidDescriptor[hidDescriptorSize++] = 0x75;
+			HidDescriptor[hidDescriptorSize++] = 0x04;
 
 			// REPORT_COUNT (1)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x95;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
+			HidDescriptor[hidDescriptorSize++] = 0x95;
+			HidDescriptor[hidDescriptorSize++] = 0x01;
 							
 			// INPUT (Data,Var,Abs)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x81;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x02;
+			HidDescriptor[hidDescriptorSize++] = 0x81;
+			HidDescriptor[hidDescriptorSize++] = 0x02;
 		
 		} else {  // Use Padding Bits
 			// REPORT_SIZE (1)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x75;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
+			HidDescriptor[hidDescriptorSize++] = 0x75;
+			HidDescriptor[hidDescriptorSize++] = 0x01;
 
 			// REPORT_COUNT (4)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x95;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x04;
+			HidDescriptor[hidDescriptorSize++] = 0x95;
+			HidDescriptor[hidDescriptorSize++] = 0x04;
 					
 			// INPUT (Const,Var,Abs)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x81;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x03;
+			HidDescriptor[hidDescriptorSize++] = 0x81;
+			HidDescriptor[hidDescriptorSize++] = 0x03;
 			
 		} // One or Two Hat Switches?
 
-	} // Hat Switches
-
+	}
 	if (axisCount > 0) {
 	
 		// USAGE (Pointer)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x01;
+		HidDescriptor[hidDescriptorSize++] = 0x09;
+		HidDescriptor[hidDescriptorSize++] = 0x01;
 
 		// LOGICAL_MINIMUM (0)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x15;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
+		HidDescriptor[hidDescriptorSize++] = 0x15;
+		HidDescriptor[hidDescriptorSize++] = 0x00;
 
 		// LOGICAL_MAXIMUM (65535)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x27;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0XFF;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0XFF;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
+		HidDescriptor[hidDescriptorSize++] = 0x27;
+		HidDescriptor[hidDescriptorSize++] = 0XFF;
+		HidDescriptor[hidDescriptorSize++] = 0XFF;
+		HidDescriptor[hidDescriptorSize++] = 0x00;
+		HidDescriptor[hidDescriptorSize++] = 0x00;
 
 		// REPORT_SIZE (16)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x75;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x10;
+		HidDescriptor[hidDescriptorSize++] = 0x75;
+		HidDescriptor[hidDescriptorSize++] = 0x10;
 
 		// REPORT_COUNT (axisCount)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x95;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = axisCount;
+		HidDescriptor[hidDescriptorSize++] = 0x95;
+		HidDescriptor[hidDescriptorSize++] = axisCount;
 						
 		// COLLECTION (Physical)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0xA1;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
+		HidDescriptor[hidDescriptorSize++] = 0xA1;
+		HidDescriptor[hidDescriptorSize++] = 0x00;
 
 		if (_include.XAxis == 1) {
 			// USAGE (X)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x30;
+			HidDescriptor[hidDescriptorSize++] = 0x09;
+			HidDescriptor[hidDescriptorSize++] = 0x30;
 		}
-
 		if (_include.YAxis == 1) {
 			// USAGE (Y)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x31;
+			HidDescriptor[hidDescriptorSize++] = 0x09;
+			HidDescriptor[hidDescriptorSize++] = 0x31;
 		}
-		
 		if (_include.ZAxis == 1) {
 			// USAGE (Z)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x32;
+			HidDescriptor[hidDescriptorSize++] = 0x09;
+			HidDescriptor[hidDescriptorSize++] = 0x32;
 		}
-		
 		if (_include.RxAxis == 1) {
 			// USAGE (Rx)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x33;
+			HidDescriptor[hidDescriptorSize++] = 0x09;
+			HidDescriptor[hidDescriptorSize++] = 0x33;
 		}
-		
 		if (_include.RyAxis == 1) {
 			// USAGE (Ry)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x34;
+			HidDescriptor[hidDescriptorSize++] = 0x09;
+			HidDescriptor[hidDescriptorSize++] = 0x34;
 		}
-		
 		if (_include.RzAxis == 1) {
 			// USAGE (Rz)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x35;
+			HidDescriptor[hidDescriptorSize++] = 0x09;
+			HidDescriptor[hidDescriptorSize++] = 0x35;
 		}
-		
-		// INPUT (Data,Var,Abs)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x81;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x02;
-		
-		// END_COLLECTION (Physical)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0xc0;
-		
-	} // X, Y, Z, Rx, Ry, and Rz Axis	
-	
+		HidDescriptor[hidDescriptorSize++] = 0x81;  // INPUT (Data,Var,Abs)
+		HidDescriptor[hidDescriptorSize++] = 0x02;
+		HidDescriptor[hidDescriptorSize++] = 0xc0;  // END_COLLECTION (Physical)
+	}
 	if (simulationCount > 0) {
-	
-		// USAGE_PAGE (Simulation Controls)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x05;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x02;
-		
-		// LOGICAL_MINIMUM (0)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x15;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
-
-		// LOGICAL_MAXIMUM (65535)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x27;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0XFF;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0XFF;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
-
-		// REPORT_SIZE (16)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x75;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x10;
-
-		// REPORT_COUNT (simulationCount)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x95;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = simulationCount;
-
-		// COLLECTION (Physical)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0xA1;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x00;
-
+		HidDescriptor[hidDescriptorSize++] = 0x05;  // USAGE_PAGE (Simulation Controls)
+		HidDescriptor[hidDescriptorSize++] = 0x02;
+		HidDescriptor[hidDescriptorSize++] = 0x15;  // LOGICAL_MINIMUM (0)
+		HidDescriptor[hidDescriptorSize++] = 0x00;		
+		HidDescriptor[hidDescriptorSize++] = 0x27;  // LOGICAL_MAXIMUM (65535)
+		HidDescriptor[hidDescriptorSize++] = 0XFF;
+		HidDescriptor[hidDescriptorSize++] = 0XFF;
+		HidDescriptor[hidDescriptorSize++] = 0x00;
+		HidDescriptor[hidDescriptorSize++] = 0x00;
+		HidDescriptor[hidDescriptorSize++] = 0x75;  // REPORT_SIZE (16)
+		HidDescriptor[hidDescriptorSize++] = 0x10;
+		HidDescriptor[hidDescriptorSize++] = 0x95;  // REPORT_COUNT (simulationCount)
+		HidDescriptor[hidDescriptorSize++] = simulationCount;
+		HidDescriptor[hidDescriptorSize++] = 0xA1;  // COLLECTION (Physical)
+		HidDescriptor[hidDescriptorSize++] = 0x00;
 		if (_include.Rudder == 1) {
-			// USAGE (Rudder)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0xBA;
+			HidDescriptor[hidDescriptorSize++] = 0x09;  // USAGE (Rudder)
+			HidDescriptor[hidDescriptorSize++] = 0xBA;
 		}
-
 		if (_include.Throttle == 1) {
-			// USAGE (Throttle)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0xBB;
+			HidDescriptor[hidDescriptorSize++] = 0x09;  // USAGE (Throttle)
+			HidDescriptor[hidDescriptorSize++] = 0xBB;
 		}
-
 		if (_include.Accelerator == 1) {
 			// USAGE (Accelerator)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0xC4;
+			HidDescriptor[hidDescriptorSize++] = 0x09;
+			HidDescriptor[hidDescriptorSize++] = 0xC4;
 		}
-
 		if (_include.Brake == 1) {
 			// USAGE (Brake)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0xC5;
+			HidDescriptor[hidDescriptorSize++] = 0x09;
+			HidDescriptor[hidDescriptorSize++] = 0xC5;
 		}
-
 		if (_include.Steering == 1) {
 			// USAGE (Steering)
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0x09;
-			tempHidReportDescriptor[hidReportDescriptorSize++] = 0xC8;
+			HidDescriptor[hidDescriptorSize++] = 0x09;
+			HidDescriptor[hidDescriptorSize++] = 0xC8;
 		}
 
 		// INPUT (Data,Var,Abs)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x81;
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0x02;
+		HidDescriptor[hidDescriptorSize++] = 0x81;
+		HidDescriptor[hidDescriptorSize++] = 0x02;
 		
 		// END_COLLECTION (Physical)
-		tempHidReportDescriptor[hidReportDescriptorSize++] = 0xc0;
-	
-	} // Simulation Controls
+		HidDescriptor[hidDescriptorSize++] = 0xc0;
+	}
 
     // END_COLLECTION
-    tempHidReportDescriptor[hidReportDescriptorSize++] = 0xc0;
+    HidDescriptor[hidDescriptorSize++] = 0xc0;
 
 	// Create a copy of the HID Report Descriptor template that is just the right size
-	uint8_t *customHidReportDescriptor = new uint8_t[hidReportDescriptorSize];
-	memcpy(customHidReportDescriptor, tempHidReportDescriptor, hidReportDescriptorSize);
+	uint8_t *customHidReportDescriptor = new uint8_t[hidDescriptorSize];
+	memcpy(customHidReportDescriptor, HidDescriptor, hidDescriptorSize);
 	
 	// Register HID Report Description
-	DynamicHIDSubDescriptor *node = new DynamicHIDSubDescriptor(customHidReportDescriptor, hidReportDescriptorSize, false);
+	DynamicHIDSubDescriptor *node = new DynamicHIDSubDescriptor(customHidReportDescriptor, hidDescriptorSize, false);
 	DynamicHID().AppendDescriptor(node);
 	
     // Setup Joystick State
@@ -534,25 +495,12 @@ Joystick_::Joystick_( uint8_t hidReportId, uint8_t joystickType,
 		}
 		_buttonValues = new uint8_t[_buttonValuesArraySize];
 	}
-	
-	// Calculate HID Report Size
-	_hidReportSize = _buttonValuesArraySize;
+	_hidReportSize = _buttonValuesArraySize;  // Calculate HID Report Size
 	_hidReportSize += (_hatSwitchCount > 0);
 	_hidReportSize += (axisCount * 2);
 	_hidReportSize += (simulationCount * 2);
 	
 	// Initialize Joystick State
-	_xAxis = 0;
-	_yAxis = 0;
-	_zAxis = 0;
-	_xAxisRotation = 0;
-	_yAxisRotation = 0;
-	_zAxisRotation = 0;
-	_throttle = 0;
-	_rudder = 0;
-	_accelerator = 0;
-	_brake = 0;
-	_steering = 0;
 	for (int index = 0; index < JOYSTICK_HATSWITCH_COUNT_MAXIMUM; index++) {
 		_hatSwitchValues[index] = JOYSTICK_HATSWITCH_RELEASE;
 	}
@@ -562,31 +510,11 @@ Joystick_::Joystick_( uint8_t hidReportId, uint8_t joystickType,
 }
 
 
-void Joystick_::begin(bool initAutoSendState) {
-	_autoSendState = initAutoSendState;
-	sendState();
-}
-
-
-void Joystick_::end() {
-}
-
-
-void Joystick_::setButton(uint8_t button, uint8_t value) {
-	if (value == 0) {
-		releaseButton(button);
-	} else {
-		pressButton(button);
-	}
-}
-
-
 void Joystick_::pressButton(uint8_t button) {
     if (button >= _buttonCount) return;
     int index = button / 8;
     int bit = button % 8;
 	bitSet(_buttonValues[index], bit);
-	if (_autoSendState) sendState();
 }
 
 
@@ -595,102 +523,29 @@ void Joystick_::releaseButton(uint8_t button) {
     int index = button / 8;
     int bit = button % 8;
     bitClear(_buttonValues[index], bit);
-	if (_autoSendState) sendState();
-}
-
-
-void Joystick_::setXAxis(int32_t value) {
-	_xAxis = value;
-	if (_autoSendState) sendState();
-}
-
-
-void Joystick_::setYAxis(int32_t value) {
-	_yAxis = value;
-	if (_autoSendState) sendState();
-}
-
-
-void Joystick_::setZAxis(int32_t value) {
-	_zAxis = value;
-	if (_autoSendState) sendState();
-}
-
-
-void Joystick_::setRxAxis(int32_t value) {
-	_xAxisRotation = value;
-	if (_autoSendState) sendState();
-}
-
-
-void Joystick_::setRyAxis(int32_t value) {
-	_yAxisRotation = value;
-	if (_autoSendState) sendState();
-}
-
-
-void Joystick_::setRzAxis(int32_t value) {
-	_zAxisRotation = value;
-	if (_autoSendState) sendState();
-}
-
-
-void Joystick_::setRudder(int32_t value) {
-	_rudder = value;
-	if (_autoSendState) sendState();
-}
-
-
-void Joystick_::setThrottle(int32_t value) {
-	_throttle = value;
-	if (_autoSendState) sendState();
-}
-
-
-void Joystick_::setAccelerator(int32_t value) {
-	_accelerator = value;
-	if (_autoSendState) sendState();
-}
-
-
-void Joystick_::setBrake(int32_t value) {
-	_brake = value;
-	if (_autoSendState) sendState();
-}
-
-
-void Joystick_::setSteering(int32_t value) {
-	_steering = value;
-	if (_autoSendState) sendState();
 }
 
 
 void Joystick_::setHatSwitch(int8_t hatSwitchIndex, int16_t value) {
 	if (hatSwitchIndex >= _hatSwitchCount) return;
 	_hatSwitchValues[hatSwitchIndex] = value;
-	if (_autoSendState) sendState();
 }
 
 
-int Joystick_::buildAndSet16BitValue(bool includeValue, int32_t value, int32_t valueMinimum, int32_t valueMaximum, 
+int Joystick_::buildAndSet16BitValue(bool includeValue, Value value, 
 									 int32_t actualMinimum, int32_t actualMaximum, uint8_t dataLocation[])  {
 	int32_t convertedValue;
-	uint8_t highByte;
-	uint8_t lowByte;
-	int32_t realMinimum = min(valueMinimum, valueMaximum);
-	int32_t realMaximum = max(valueMinimum, valueMaximum);
+	uint8_t highByte, lowByte;
+	int32_t realMinimum = min(value.min, value.max);
+	int32_t realMaximum = max(value.min, value.max);
 	if (includeValue == false) return 0;
-	if (value < realMinimum) {
-		value = realMinimum;
-	}
-	if (value > realMaximum) {
-		value = realMaximum;
-	}
-	if (valueMinimum > valueMaximum) {
+	if (value.val < realMinimum) value.val = realMinimum;
+	if (value.val > realMaximum) value.val = realMaximum;
+	if (value.min > value.max) {
 		// Values go from a larger number to a smaller number (e.g. 1024 to 0)
-		value = realMaximum - value + realMinimum;
+		value.val = realMaximum - value.val + realMinimum;
 	}
-	convertedValue = map(value, realMinimum, realMaximum, actualMinimum, actualMaximum);
+	convertedValue = map(value.val, realMinimum, realMaximum, actualMinimum, actualMaximum);
 	highByte = (uint8_t)(convertedValue >> 8);
 	lowByte = (uint8_t)(convertedValue & 0x00FF);
 	dataLocation[0] = lowByte;
@@ -699,14 +554,15 @@ int Joystick_::buildAndSet16BitValue(bool includeValue, int32_t value, int32_t v
 }
 
 
-int Joystick_::buildAndSetAxisValue(bool includeAxis, int32_t axisValue, int32_t axisMinimum, int32_t axisMaximum, uint8_t dataLocation[])  {
-	return buildAndSet16BitValue(includeAxis, axisValue, axisMinimum, axisMaximum, JOYSTICK_AXIS_MINIMUM, JOYSTICK_AXIS_MAXIMUM, dataLocation);
+int Joystick_::buildAndSetAxisValue(bool includeAxis, Value value, uint8_t dataLocation[])  {
+	return buildAndSet16BitValue(includeAxis, value, JOYSTICK_AXIS_MINIMUM, 
+								 JOYSTICK_AXIS_MAXIMUM, dataLocation);
 }
 
 
-int Joystick_::buildAndSetSimulationValue(bool includeValue, int32_t value, int32_t valueMinimum, int32_t valueMaximum, uint8_t dataLocation[])  {
-	return buildAndSet16BitValue(includeValue, value, valueMinimum, valueMaximum, 
-			JOYSTICK_SIMULATOR_MINIMUM, JOYSTICK_SIMULATOR_MAXIMUM, dataLocation);
+int Joystick_::buildAndSetSimulationValue(bool includeValue, Value value, uint8_t dataLocation[])  {
+	return buildAndSet16BitValue(includeValue, value, JOYSTICK_SIMULATOR_MINIMUM,
+			 					 JOYSTICK_SIMULATOR_MAXIMUM, dataLocation);
 }
 
 
@@ -731,19 +587,19 @@ void Joystick_::sendState() {
 	}
 
 	// Set Axis Values
-	index += buildAndSetAxisValue(_include.XAxis, _xAxis, _xAxisMinimum, _xAxisMaximum, &(data[index]));
-	index += buildAndSetAxisValue(_include.YAxis, _yAxis, _yAxisMinimum, _yAxisMaximum, &(data[index]));
-	index += buildAndSetAxisValue(_include.ZAxis, _zAxis, _zAxisMinimum, _zAxisMaximum, &(data[index]));
-	index += buildAndSetAxisValue(_include.RxAxis, _xAxisRotation, _rxAxisMinimum, _rxAxisMaximum, &(data[index]));
-	index += buildAndSetAxisValue(_include.RyAxis, _yAxisRotation, _ryAxisMinimum, _ryAxisMaximum, &(data[index]));
-	index += buildAndSetAxisValue(_include.RzAxis, _zAxisRotation, _rzAxisMinimum, _rzAxisMaximum, &(data[index]));
+	index += buildAndSetAxisValue(_include.XAxis, _xAxis, &(data[index]));
+	index += buildAndSetAxisValue(_include.YAxis, _yAxis, &(data[index]));
+	index += buildAndSetAxisValue(_include.ZAxis, _zAxis, &(data[index]));
+	index += buildAndSetAxisValue(_include.RxAxis, _xAxisRotation, &(data[index]));
+	index += buildAndSetAxisValue(_include.RyAxis, _yAxisRotation, &(data[index]));
+	index += buildAndSetAxisValue(_include.RzAxis, _zAxisRotation, &(data[index]));
 	
 	// Set Simulation Values
-	index += buildAndSetSimulationValue(_include.Rudder, _rudder, _rudderMinimum, _rudderMaximum, &(data[index]));
-	index += buildAndSetSimulationValue(_include.Throttle, _throttle, _throttleMinimum, _throttleMaximum, &(data[index]));
-	index += buildAndSetSimulationValue(_include.Accelerator, _accelerator, _acceleratorMinimum, _acceleratorMaximum, &(data[index]));
-	index += buildAndSetSimulationValue(_include.Brake, _brake, _brakeMinimum, _brakeMaximum, &(data[index]));
-	index += buildAndSetSimulationValue(_include.Steering, _steering, _steeringMinimum, _steeringMaximum, &(data[index]));
+	index += buildAndSetSimulationValue(_include.Rudder, _rudder, &(data[index]));
+	index += buildAndSetSimulationValue(_include.Throttle, _throttle, &(data[index]));
+	index += buildAndSetSimulationValue(_include.Accelerator, _accelerator, &(data[index]));
+	index += buildAndSetSimulationValue(_include.Brake, _brake, &(data[index]));
+	index += buildAndSetSimulationValue(_include.Steering, _steering, &(data[index]));
 	DynamicHID().SendReport(_hidReportId, data, _hidReportSize);
 }
 

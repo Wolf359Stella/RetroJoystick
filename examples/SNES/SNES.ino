@@ -1,4 +1,4 @@
-#include <RetroJoystick.h>
+#include <JoySNES.h>
 
 #define CLOCK 6
 #define LATCH 7
@@ -6,9 +6,7 @@
 JoySNES joystick(CLOCK, LATCH, DATA);
 
 
-void setup(){
-    joystick.begin(false);
-}
+void setup(){}
 
 
 void loop(){

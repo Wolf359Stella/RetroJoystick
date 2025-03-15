@@ -4,9 +4,7 @@
 JoySegaMegadrive joystick(2);
  
 
-void setup() {
-    joystick.begin(false);  
-}
+void setup() {}
  
 
 void loop() {
