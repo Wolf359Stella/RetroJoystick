@@ -194,22 +194,16 @@ Joystick_::Joystick_( uint8_t hidReportId, uint8_t joystickType,
 	uint8_t simulationCount = _include.Rudder + _include.Throttle + _include.Brake
 							+ _include.Accelerator + _include.Steering; 
     uint8_t HidDescriptor[150];
-    int hidDescriptorSize = 0;
-
-    // USAGE_PAGE (Generic Desktop)
-    HidDescriptor[hidDescriptorSize++] = 0x05;
+    int hidDescriptorSize = 0;    
+    HidDescriptor[hidDescriptorSize++] = 0x05; // USAGE_PAGE (Generic Desktop)
     HidDescriptor[hidDescriptorSize++] = 0x01;
 
     // USAGE (Joystick - 0x04; Gamepad - 0x05; Multi-axis Controller - 0x08)
     HidDescriptor[hidDescriptorSize++] = 0x09;
     HidDescriptor[hidDescriptorSize++] = joystickType;
-
-    // COLLECTION (Application)
-    HidDescriptor[hidDescriptorSize++] = 0xa1;
-    HidDescriptor[hidDescriptorSize++] = 0x01;
-
-    // REPORT_ID (Default: 3)
-    HidDescriptor[hidDescriptorSize++] = 0x85;
+    HidDescriptor[hidDescriptorSize++] = 0xa1;  // COLLECTION (Application)
+    HidDescriptor[hidDescriptorSize++] = 0x01;    
+    HidDescriptor[hidDescriptorSize++] = 0x85;  // REPORT_ID (Default: 3)
     HidDescriptor[hidDescriptorSize++] = _hidReportId;
 	
 	if (_buttonCount > 0) {
@@ -273,24 +267,24 @@ Joystick_::Joystick_( uint8_t hidReportId, uint8_t joystickType,
 	}
 	if (_hatSwitchCount > 0) {
 
-		// USAGE (Hat Switch)
-		HidDescriptor[hidDescriptorSize++] = 0x09;
+		
+		HidDescriptor[hidDescriptorSize++] = 0x09; // USAGE (Hat Switch)
 		HidDescriptor[hidDescriptorSize++] = 0x39;
 
-		// LOGICAL_MINIMUM (0)
-		HidDescriptor[hidDescriptorSize++] = 0x15;
+		
+		HidDescriptor[hidDescriptorSize++] = 0x15; // LOGICAL_MINIMUM (0)
 		HidDescriptor[hidDescriptorSize++] = 0x00;
 
-		// LOGICAL_MAXIMUM (7)
-		HidDescriptor[hidDescriptorSize++] = 0x25;
+		
+		HidDescriptor[hidDescriptorSize++] = 0x25; // LOGICAL_MAXIMUM (7)
 		HidDescriptor[hidDescriptorSize++] = 0x07;
 
-		// PHYSICAL_MINIMUM (0)
-		HidDescriptor[hidDescriptorSize++] = 0x35;
+		
+		HidDescriptor[hidDescriptorSize++] = 0x35; // PHYSICAL_MINIMUM (0)
 		HidDescriptor[hidDescriptorSize++] = 0x00;
 
-		// PHYSICAL_MAXIMUM (315)
-		HidDescriptor[hidDescriptorSize++] = 0x46;
+		
+		HidDescriptor[hidDescriptorSize++] = 0x46; // PHYSICAL_MAXIMUM (315)
 		HidDescriptor[hidDescriptorSize++] = 0x3B;
 		HidDescriptor[hidDescriptorSize++] = 0x01;
 
@@ -365,9 +359,7 @@ Joystick_::Joystick_( uint8_t hidReportId, uint8_t joystickType,
 		} // One or Two Hat Switches?
 
 	}
-	if (axisCount > 0) {
-	
-		// USAGE (Pointer)
+	if (axisCount > 0) { // USAGE (Pointer)
 		HidDescriptor[hidDescriptorSize++] = 0x09;
 		HidDescriptor[hidDescriptorSize++] = 0x01;
 
@@ -394,33 +386,27 @@ Joystick_::Joystick_( uint8_t hidReportId, uint8_t joystickType,
 		HidDescriptor[hidDescriptorSize++] = 0xA1;
 		HidDescriptor[hidDescriptorSize++] = 0x00;
 
-		if (_include.XAxis == 1) {
-			// USAGE (X)
-			HidDescriptor[hidDescriptorSize++] = 0x09;
+		if (_include.XAxis == 1) { // USAGE (X)
+			HidDescriptor[hidDescriptorSize++] = 0x09; 
 			HidDescriptor[hidDescriptorSize++] = 0x30;
 		}
-		if (_include.YAxis == 1) {
-			// USAGE (Y)
+		if (_include.YAxis == 1) { // USAGE (Y)	
 			HidDescriptor[hidDescriptorSize++] = 0x09;
 			HidDescriptor[hidDescriptorSize++] = 0x31;
 		}
-		if (_include.ZAxis == 1) {
-			// USAGE (Z)
+		if (_include.ZAxis == 1) { // USAGE (Z)
 			HidDescriptor[hidDescriptorSize++] = 0x09;
 			HidDescriptor[hidDescriptorSize++] = 0x32;
 		}
-		if (_include.RxAxis == 1) {
-			// USAGE (Rx)
+		if (_include.RxAxis == 1) { // USAGE (Rx)
 			HidDescriptor[hidDescriptorSize++] = 0x09;
 			HidDescriptor[hidDescriptorSize++] = 0x33;
 		}
-		if (_include.RyAxis == 1) {
-			// USAGE (Ry)
+		if (_include.RyAxis == 1) { // USAGE (Ry)
 			HidDescriptor[hidDescriptorSize++] = 0x09;
 			HidDescriptor[hidDescriptorSize++] = 0x34;
 		}
-		if (_include.RzAxis == 1) {
-			// USAGE (Rz)
+		if (_include.RzAxis == 1) { // USAGE (Rz)
 			HidDescriptor[hidDescriptorSize++] = 0x09;
 			HidDescriptor[hidDescriptorSize++] = 0x35;
 		}
@@ -467,13 +453,9 @@ Joystick_::Joystick_( uint8_t hidReportId, uint8_t joystickType,
 			HidDescriptor[hidDescriptorSize++] = 0x09;
 			HidDescriptor[hidDescriptorSize++] = 0xC8;
 		}
-
-		// INPUT (Data,Var,Abs)
-		HidDescriptor[hidDescriptorSize++] = 0x81;
+		HidDescriptor[hidDescriptorSize++] = 0x81;  // INPUT (Data,Var,Abs)
 		HidDescriptor[hidDescriptorSize++] = 0x02;
-		
-		// END_COLLECTION (Physical)
-		HidDescriptor[hidDescriptorSize++] = 0xc0;
+		HidDescriptor[hidDescriptorSize++] = 0xc0;  // END_COLLECTION (Physical)
 	}
 
     // END_COLLECTION

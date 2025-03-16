@@ -208,7 +208,6 @@ class Joystick_ {
         uint8_t  _buttonValuesArraySize = 0;
         uint8_t  _hatSwitchCount;
         IncludeFlags _include;
-
         uint8_t   _hidReportId;
         uint8_t   _hidReportSize; 
 
@@ -248,5 +247,4 @@ class Joystick_ {
         void sendState();
 };
 
-
-#endif // JOYSTICK_h
+#endif

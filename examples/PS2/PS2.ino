@@ -1,4 +1,4 @@
-#include <RetroJoystick.h>
+#include <JoyPS2.h>
 
 #define PS2_DAT        13   
 #define PS2_CMD        11
@@ -7,10 +7,7 @@
 #define pressures   false
 #define rumble      false
 
-//  +-------+-------+-------+  * pin 1: data           * pin 5: power (3.3-5v)
-//  | 1 2 3 | 4 5 6 | 7 8 9 |  * pin 2: command        * pin 6: select
-//   \______|_______|______/   * pin 3: motor (7.2-9v) * pin 7: clock
-//                             * pin 4: gnd            * pin 9: ACK
+
 JoyPS2 joystick(PS2_CLK, PS2_CMD, PS2_SEL, PS2_DAT, pressures, rumble);
 int error = 0;
 byte type = 0;
@@ -19,10 +16,7 @@ byte vibrate = 0;
 
 void setup() {
     Serial.begin(9600);
-    Serial.println("Started...");
-    delay(5000);
-    error = joystick.begin(false);  
-    delay(1000);
+    error = joystick.begin();  
 
     if(error == 0){
         Serial.println("Found Controller, configured successful ");
@@ -51,6 +45,6 @@ void setup() {
  
 
 void loop() {
-    
+    joystick.loop();
 }
  

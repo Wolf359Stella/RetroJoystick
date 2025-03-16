@@ -45,7 +45,6 @@ void JoySNES::loop(){
     SNES_X & ~state ? pressButton(5) : releaseButton(5);
     SNES_L & ~state ? pressButton(6) : releaseButton(6);
     SNES_R & ~state ? pressButton(7) : releaseButton(7);
-    // 360° Hat Switch 0
     setHatSwitch(0, -1); // release
     if (SNES_UP & ~state) setHatSwitch(0, 0);
     if (SNES_RIGHT & ~state) setHatSwitch(0, 90);
